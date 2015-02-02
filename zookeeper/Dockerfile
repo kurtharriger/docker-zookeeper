@@ -2,12 +2,16 @@ FROM wouterd/java7
 
 MAINTAINER Wouter Danes <wouter@wouterdanes.net>
 
-ADD http://ftp.nluug.nl/internet/apache/zookeeper/stable/zookeeper-3.4.6.tar.gz /zookeeper.tar.gz
+ADD zookeeper-3.3.5.tar.gz /
+ADD zookeeper-3.4.6.tar.gz /
+ADD data.tgz /var/lib/zookeeper
 
-RUN mkdir -p zoo && \
-  cd zoo && \
-  tar xvfz ../zookeeper.tar.gz --strip-components=1 && \
-  rm /zookeeper.tar.gz
+RUN apt-get update 
+RUN apt-get install -y net-tools netcat openssh-server
+
+RUN ln -s zookeeper-3.3.5 zookeeper
+RUN ln -s /zoo/conf/zoo.cfg zookeeper-3.3.5/conf/zoo.cfg
+RUN ln -s /zoo/conf/zoo.cfg zookeeper-3.4.6/conf/zoo.cfg
 
 ADD start-server.sh /
 
@@ -15,4 +19,5 @@ RUN chmod +x /start-server.sh
 
 CMD ["/start-server.sh"]
 
-EXPOSE 2888 3888 2181
+EXPOSE 22 2888 3888 2181
+
